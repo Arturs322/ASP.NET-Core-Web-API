@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TasksManagerAPI.Data;
 using TasksManagerAPI.Models;
 
@@ -40,6 +41,22 @@ namespace TasksManagerAPI.Controllers
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"Error in CreateTask: {ex}");
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        [Route("/GetTasks")]
+        public async Task<IActionResult> GetTasks()
+        {
+            try
+            {
+                var tasks = await _context.Tasks.ToListAsync();
+                return Ok(tasks);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error in GetTasks: {ex}");
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
