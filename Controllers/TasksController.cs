@@ -60,5 +60,37 @@ namespace TasksManagerAPI.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+        [HttpPut]
+        [Route("UpdateTask/{id}")]
+        public async Task<IActionResult> UpdateTask(Guid id, Tasks updatedTask)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var existingTask = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+
+                if (existingTask == null)
+                {
+                    return NotFound("Task not found");
+                }
+
+                existingTask.Title = updatedTask.Title;
+
+                _context.Tasks.Update(existingTask);
+                await _context.SaveChangesAsync();
+
+                return Ok(existingTask);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error in UpdateTask: {ex}");
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }
