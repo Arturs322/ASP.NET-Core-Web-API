@@ -92,5 +92,30 @@ namespace TasksManagerAPI.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+        [HttpDelete]
+        [Route("DeleteTask/{id}")]
+        public async Task<IActionResult> DeleteTask(Guid id)
+        {
+            try
+            {
+                var taskToDelete = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+
+                if (taskToDelete == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Tasks.Remove(taskToDelete);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error in DeleteTask: {ex}");
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }
